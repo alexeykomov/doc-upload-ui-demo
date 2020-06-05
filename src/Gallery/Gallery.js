@@ -14,6 +14,8 @@ const useStyles = makeStyles({
     display: 'flex',
     flexWrap: 'wrap',
     margin: '0 auto',
+    maxWidth: '825px',
+    width: '100%'
   },
   title: {
     fontSize: 14,
