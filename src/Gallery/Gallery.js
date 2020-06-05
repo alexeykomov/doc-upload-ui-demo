@@ -1,6 +1,6 @@
-import React from "react";
-import { Card, Typography, CardContent } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import React from 'react';
+import { Card, Typography, CardContent } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
   root: {
@@ -8,8 +8,8 @@ const useStyles = makeStyles({
     maxWidth: 275,
   },
   container: {
-    display: "flex",
-    flexWrap: "wrap",
+    display: 'flex',
+    flexWrap: 'wrap',
     margin: '0 auto',
   },
   title: {
