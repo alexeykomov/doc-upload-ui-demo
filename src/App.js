@@ -1,6 +1,8 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import UploadForm from "./UploadForm/UploadForm";
+import Gallery from "./Gallery/Gallery";
 
 function App() {
   return (
@@ -19,6 +21,10 @@ function App() {
           Learn React
         </a>
       </header>
+      {'This is a form'}
+      <UploadForm/>
+      {'This is a gallery'}
+      <Gallery/>
     </div>
   );
 }
