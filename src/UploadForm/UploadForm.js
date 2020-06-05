@@ -1,14 +1,13 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-
+import React from "react";
+import Button from "@material-ui/core/Button";
 
 function UploadForm() {
   return (
-      <form>
-        <Button variant="contained" color="primary">
+    <form>
+      <Button variant="contained" color="primary">
         Hello World
       </Button>
-      </form>
+    </form>
   );
 }
 
