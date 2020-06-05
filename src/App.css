@@ -7,6 +7,11 @@ html, body, .root {
   height: 100%;
 }
 
+.App-header {
+
+  text-align: center;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

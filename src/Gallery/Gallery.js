@@ -1,6 +1,9 @@
 import React from 'react';
 import { Card, Typography, CardContent } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import CardActions from "@material-ui/core/CardActions";
+import Button from "@material-ui/core/Button";
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles({
   root: {
@@ -23,6 +26,8 @@ const useStyles = makeStyles({
 function Gallery() {
   const classes = useStyles();
   const cards = [];
+  const history = useHistory();
+  const makeOnClick = cardId => () => { history.push(`/item/${cardId}`) }
   for (let counter = 0; counter < 10; counter++) {
     cards.push(
       <Card className={classes.root} key={counter} square={true}>
@@ -31,6 +36,9 @@ function Gallery() {
             {`This is uploaded document #${counter}`}
           </Typography>
         </CardContent>
+        <CardActions>
+          <Button size="small" onClick={makeOnClick(counter)}>Open</Button>
+        </CardActions>
       </Card>
     );
   }
