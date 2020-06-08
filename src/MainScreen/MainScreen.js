@@ -17,7 +17,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    height: '100%',
+    minHeight: '100%',
   },
   content: {
     flex: 1,
@@ -71,7 +71,7 @@ export const MainScreen = () => {
             />
             <Route
               path="/item/:id"
-              children={<GalleryItem documents={documents} />}
+              children={<GalleryItem setDocuments={setDocuments} documents={documents} />}
             />
           </Switch>
         </div>
