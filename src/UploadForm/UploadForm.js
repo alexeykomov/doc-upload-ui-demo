@@ -1,6 +1,5 @@
-import React from "react";
-import Button from "@material-ui/core/Button";
-
+import React from 'react';
+import Button from '@material-ui/core/Button';
 
 function UploadForm() {
   return (
