@@ -54,7 +54,7 @@ const useStyles = makeStyles({
   },
   pageView: {
     width: '80%',
-    maxWidth: '700px',
+    maxWidth: '600px',
     cursor: 'grab',
   },
   title: {
