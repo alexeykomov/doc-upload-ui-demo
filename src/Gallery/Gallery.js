@@ -28,6 +28,7 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     display: 'flex',
     height: '100%',
+    width: '100%',
 
 
     position: 'absolute',
@@ -39,7 +40,6 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'auto',
-    minHeight: 0,
     height: '100%',
   },
   listContainer: {
@@ -54,6 +54,7 @@ const useStyles = makeStyles({
   },
   pageView: {
     width: '80%',
+    maxWidth: '700px',
     cursor: 'grab',
   },
   title: {
