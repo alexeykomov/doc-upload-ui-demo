@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  useHistory,
-  useRouteMatch,
-} from 'react-router-dom';
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import UploadForm from '../UploadForm/UploadForm';
 import Gallery from '../Gallery/Gallery';
 import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
@@ -23,7 +17,6 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    //alignItems: 'center',
     height: '100%',
   },
   content: {
@@ -38,8 +31,6 @@ export const MainScreen = () => {
   const classes = useStyles();
   const history = useHistory();
   const onChange = (event, newValue) => {
-    console.log('newValue: ', newValue);
-    console.log('history: ', history);
     history.push(`/${newValue}`);
   };
   const matchRoot = useRouteMatch('/');
@@ -59,9 +50,11 @@ export const MainScreen = () => {
     if (matchItem && matchItem.path === '/item/:id') {
       return 'gallery';
     }
-    return 'upload'
+    return 'upload';
   })();
-  console.log('activeTab: ', activeTab);
+
+  const [documents, setDocuments] = useState([]);
+
   return (
     <>
       <div className={classes.container}>
@@ -70,8 +63,16 @@ export const MainScreen = () => {
           <Switch>
             <Route exact path="/" children={<UploadForm />} />
             <Route path="/upload" children={<UploadForm />} />
-            <Route path="/gallery" children={<Gallery />} />
-            <Route path="/item/:id" children={<GalleryItem />} />
+            <Route
+              path="/gallery"
+              children={
+                <Gallery setDocuments={setDocuments} documents={documents} />
+              }
+            />
+            <Route
+              path="/item/:id"
+              children={<GalleryItem documents={documents} />}
+            />
           </Switch>
         </div>
         <BottomNavigation
