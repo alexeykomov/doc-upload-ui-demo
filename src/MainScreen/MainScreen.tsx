@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import UploadForm from '../UploadForm/UploadForm';
 import Gallery from '../Gallery/Gallery';
-import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import ListIcon from '@material-ui/icons/List';
 import { makeStyles } from '@material-ui/core/styles';
 import grey from '@material-ui/core/colors/grey';
 import { GalleryItem } from '../GalleryItem/GalleryItem';
+import { UploadedDocument } from '../__types__';
 
 const useStyles = makeStyles({
   root: {
@@ -29,31 +27,7 @@ const useStyles = makeStyles({
 
 export const MainScreen = () => {
   const classes = useStyles();
-  const history = useHistory();
-  const onChange = (event, newValue) => {
-    history.push(`/${newValue}`);
-  };
-  const matchRoot = useRouteMatch('/');
-  const matchUpload = useRouteMatch('/upload');
-  const matchGallery = useRouteMatch('/gallery/:id');
-  const matchItem = useRouteMatch('/item/:id');
-  const activeTab = (() => {
-    if (matchRoot && matchRoot.path === '/' && matchRoot.isExact) {
-      return 'upload';
-    }
-    if (matchUpload && matchUpload.path === '/upload') {
-      return 'upload';
-    }
-    if (matchGallery && matchGallery.path === '/gallery/:id') {
-      return 'gallery';
-    }
-    if (matchItem && matchItem.path === '/item/:id') {
-      return 'gallery';
-    }
-    return 'upload';
-  })();
-
-  const [documents, setDocuments] = useState([]);
+  const [documents, setDocuments] = useState([] as UploadedDocument[]);
 
   return (
     <>

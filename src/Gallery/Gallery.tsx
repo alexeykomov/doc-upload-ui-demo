@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Typography, CardContent } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import CardActions from '@material-ui/core/CardActions';
-import Button from '@material-ui/core/Button';
+import React, { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import CardMedia from '@material-ui/core/CardMedia';
-import { differenceWith, unionWith } from 'lodash';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import differenceWith from 'lodash/differenceWith';
+import unionWith from 'lodash/unionWith';
+
+import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+
+import { SetDocuments, UploadedDocument } from '../__types__';
 
 const useStyles = makeStyles({
   root: {
@@ -29,7 +29,6 @@ const useStyles = makeStyles({
     display: 'flex',
     height: '100%',
     width: '100%',
-
 
     position: 'absolute',
   },
@@ -69,24 +68,38 @@ const useStyles = makeStyles({
   },
 });
 
-const compareDocuments = (documentA, documentB) => {
+interface GalleryItemProps {
+  setDocuments: SetDocuments;
+  documents: UploadedDocument[];
+}
+
+const compareDocuments = (
+  documentA: UploadedDocument,
+  documentB: UploadedDocument
+) => {
   if (documentA.name === documentB.name && documentA.ext === documentB.ext) {
     return true;
   }
   return false;
 };
 
-const shouldRenderNewDocuments = (oldDocuments, newDocuments) => {
+const shouldRenderNewDocuments = (
+  oldDocuments: UploadedDocument[],
+  newDocuments: UploadedDocument[]
+) => {
   let union = unionWith(newDocuments, oldDocuments, compareDocuments);
   const difference = differenceWith(union, oldDocuments, compareDocuments);
-  return difference.length !== 0;
+  return difference.length;
 };
 
-function Gallery({ setDocuments, documents: aDocuments }) {
+function Gallery(props: GalleryItemProps) {
+  const { documents: aDocuments, setDocuments } = props;
   const classes = useStyles();
   const history = useHistory();
   const { id } = useParams();
+
   console.log('id: ', id);
+
   let items = [
     { name: "Driver's License", selected: false },
     { name: 'Your Photo', selected: false },
@@ -105,7 +118,7 @@ function Gallery({ setDocuments, documents: aDocuments }) {
       })
       .catch((e) => console.log(`Error when fetching documents: ${e}`));
   });
-  const makeOnClick = (cardId) => () => {
+  const makeOnClick = (cardId: number) => () => {
     history.push(`/gallery/${cardId}`);
   };
 
@@ -113,7 +126,7 @@ function Gallery({ setDocuments, documents: aDocuments }) {
     <ListItem
       button
       onClick={makeOnClick(index)}
-      className={item.selected ? classes.listItemSelected : {}}
+      className={item.selected ? classes.listItemSelected : ''}
       key={item.name}
     >
       <ListItemText primary={item.name} className={classes.itemText} />
