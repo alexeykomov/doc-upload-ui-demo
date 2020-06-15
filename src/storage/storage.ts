@@ -127,6 +127,8 @@ export class Storage {
         return;
       }
       transaction.oncomplete = (event) => {
+        //@ts-ignore
+        console.log('event.target.result: ', event.target.result);
         resolve(imageRecord);
       };
       transaction.onerror = (event) => {
@@ -137,6 +139,7 @@ export class Storage {
       request.onsuccess = (event) => {
         const request = event.target as IDBRequest;
         imageRecord = request.result as DocumentRecordForStorage;
+        console.log('imageRecord: ', imageRecord);
         console.log('Request is success: ');
       };
     }).then((r: DocumentRecordForStorage | null) => {
