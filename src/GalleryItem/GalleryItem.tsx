@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import CardMedia from '@material-ui/core/CardMedia';
 import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { UploadedDocument, SetDocuments } from '../__types__';
 
 const useStyles = makeStyles({
   root: {
@@ -24,7 +25,13 @@ const useStyles = makeStyles({
   },
 });
 
-export const GalleryItem = ({ setDocuments, documents }) => {
+interface GalleryItemProps {
+  setDocuments: SetDocuments;
+  documents: UploadedDocument[];
+}
+
+export const GalleryItem = (props: GalleryItemProps) => {
+  const { setDocuments, documents } = props;
   const { id } = useParams();
   const history = useHistory();
   const goBack = () => {
@@ -58,10 +65,10 @@ export const GalleryItem = ({ setDocuments, documents }) => {
           setLoading(false);
         })
     );
-  });
+  }, [id, documents, setDocuments, loading]);
 
-  return (!document && loading) ? (
-    <Card className={[classes.root, classes.progress]} square={true}>
+  return !document && loading ? (
+    <Card className={`${classes.root} ${classes.progress}`} square={true}>
       <CircularProgress />
     </Card>
   ) : document ? (
