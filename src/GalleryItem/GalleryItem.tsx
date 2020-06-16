@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import differenceWith from 'lodash/differenceWith';
-import unionWith from 'lodash/unionWith';
-
-import { makeStyles } from '@material-ui/core/styles';
-
 import { SetDocuments, UploadedDocument } from '../__types__';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,110 +9,14 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { AppBar, Typography } from '@material-ui/core';
 import { openingStorage } from '../storage/storage';
 import { MoreActions } from '../MoreActions';
-import {WIDE_SCREEN_MEDIA_QUERY} from "../MainScreen/MainScreenConstants";
-
-const useStyles = makeStyles({
-  root: {
-    minWidth: 275,
-    maxWidth: 275,
-  },
-  header: {
-    color: 'rgb(141,175,192)',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    paddingTop: '16px',
-    paddingLeft: '16px',
-    paddingRight: '16px',
-  },
-  mainContainer: {
-    flexDirection: 'row',
-    display: 'flex',
-    height: '100%',
-    width: '100%',
-
-    position: 'absolute',
-  },
-  readingContainer: {
-    position: 'absolute',
-    backgroundColor: 'rgb(233,239,246)',
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'auto',
-    height: 'calc(100% - 56px)',
-    width: '100%',
-    marginTop: '56px',
-  },
-  readingContainerScreenIsWide: {
-    position: 'static',
-    height: '100%',
-    marginTop: '0',
-  },
-  listContainer: {
-    maxWidth: '320px',
-    backgroundColor: '#fff',
-  },
-  listItemSelected: {
-    backgroundColor: 'rgb(233,239,246)',
-  },
-  itemText: {
-    color: 'rgb(121,120,121)',
-  },
-  pageView: {
-    width: '80%',
-    maxWidth: '600px',
-    cursor: 'grab',
-  },
-  progress: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: 'transparent',
-  },
-  uploadForm: {
-    position: 'absolute',
-    visibility: 'hidden',
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-});
+import { WIDE_SCREEN_MEDIA_QUERY } from '../MainScreen/MainScreenConstants';
+import { shouldRenderNewDocuments } from './GalleryItemUtils';
+import { useStyles } from './GalleryItemStyles';
 
 interface GalleryItemProps {
   setDocuments: SetDocuments;
   documents: UploadedDocument[];
 }
-
-const compareDocuments = (
-  documentA: UploadedDocument,
-  documentB: UploadedDocument
-) => {
-  if (
-    documentA.name === documentB.name &&
-    documentA.ext === documentB.ext &&
-    documentA.url === documentB.url
-  ) {
-    return true;
-  }
-  return false;
-};
-
-const shouldRenderNewDocuments = (
-  oldDocuments: UploadedDocument[],
-  newDocuments: UploadedDocument[]
-) => {
-  let union = unionWith(newDocuments, oldDocuments, compareDocuments);
-  const difference = differenceWith(union, oldDocuments, compareDocuments);
-  return difference.length;
-};
 
 function GalleryItem(props: GalleryItemProps) {
   const { documents: aDocuments, setDocuments } = props;
@@ -128,8 +27,6 @@ function GalleryItem(props: GalleryItemProps) {
   const screenIsWide = useMediaQuery(WIDE_SCREEN_MEDIA_QUERY);
   const [screenIsWideState, setScreenIsWideState] = useState(screenIsWide);
   const history = useHistory();
-
-  console.log('id: ', id);
 
   const documentList = aDocuments.map((document, index) => ({
     ...document,

@@ -26,6 +26,9 @@ export const MoreActions = ({
   };
   const open = !!anchorEl;
   const onClose = () => {
+    setAnchorEl(null);
+  }
+  const onDeleteClick = () => {
     openingStorage
       .then((storage) => {
         return storage.delete(selectedDocument.category);
@@ -70,7 +73,7 @@ export const MoreActions = ({
         open={open}
         onClose={onClose}
       >
-        <MenuItem onClick={onClose}>
+        <MenuItem onClick={onDeleteClick}>
           <Delete />
           {`Delete ${selectedDocument.category}`}
         </MenuItem>
