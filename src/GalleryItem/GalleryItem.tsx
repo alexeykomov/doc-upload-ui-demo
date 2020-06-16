@@ -11,6 +11,8 @@ import IconButton from '@material-ui/core/IconButton';
 import { PhotoCamera } from '@material-ui/icons';
 import { openingStorage } from '../index';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Toolbar from '@material-ui/core/Toolbar';
+import { AppBar, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles({
   root: {
@@ -223,38 +225,45 @@ function GalleryItem(props: GalleryItemProps) {
   };
 
   return (
-    <div className={classes.readingContainer}>
-      {loading ? (
-        <CircularProgress className={classes.progress} />
-      ) : document.url ? (
-        <img
-          width={300}
-          src={document.url}
-          alt={document.name}
-          className={classes.pageView}
-        />
-      ) : (
-        <>
-          <input
-            type="file"
-            accept="image/*,application/pdf"
-            id="upload-form-mini"
-            className={classes.uploadForm}
-            onChange={onChange}
-            ref={inputRef}
+    <>
+      {screenIsWide ? null : <AppBar>
+        <Toolbar>
+          <Typography variant="h6">{`${document.category}`}</Typography>
+        </Toolbar>
+      </AppBar>}
+      <div className={classes.readingContainer}>
+        {loading ? (
+          <CircularProgress className={classes.progress} />
+        ) : document.url ? (
+          <img
+            width={300}
+            src={document.url}
+            alt={document.name}
+            className={classes.pageView}
           />
-          <label htmlFor="upload-form-mini">
-            <IconButton
-              color="primary"
-              aria-label="Upload document"
-              component="span"
-            >
-              <PhotoCamera />
-            </IconButton>
-          </label>
-        </>
-      )}
-    </div>
+        ) : (
+          <>
+            <input
+              type="file"
+              accept="image/*,application/pdf"
+              id="upload-form-mini"
+              className={classes.uploadForm}
+              onChange={onChange}
+              ref={inputRef}
+            />
+            <label htmlFor="upload-form-mini">
+              <IconButton
+                color="primary"
+                aria-label="Upload document"
+                component="span"
+              >
+                <PhotoCamera fontSize={screenIsWide ? 'default' : 'large'} />
+              </IconButton>
+            </label>
+          </>
+        )}
+      </div>
+    </>
   );
 }
 
