@@ -138,7 +138,7 @@ function Gallery(props: GalleryItemProps) {
     <ListItem
       button
       onClick={makeOnClick(index)}
-      className={item.selected ? classes.listItemSelected : ''}
+      className={screenIsWide && item.selected ? classes.listItemSelected : ''}
       key={item.category}
     >
       <ListItemText primary={DocumentName[item.category]} className={classes.itemText} />
