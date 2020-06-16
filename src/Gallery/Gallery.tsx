@@ -12,9 +12,9 @@ import { SetDocuments, UploadedDocument } from '../__types__';
 import { openingStorage } from '../index';
 import GalleryItem from '../GalleryItem/GalleryItem';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import { Delete} from "@material-ui/icons";
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import { Delete } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   root: {
@@ -32,9 +32,9 @@ const useStyles = makeStyles({
   mainContainer: {
     flexDirection: 'row',
     display: 'flex',
-    height: '100%',
+    height: 'calc(100% - 64px)',
     width: '100%',
-
+    marginTop: '64px',
     position: 'absolute',
   },
   readingContainer: {
@@ -141,40 +141,41 @@ function Gallery(props: GalleryItemProps) {
     </ListItem>
   ));
 
-  return (<>
+  return (
+    <>
       <AppBar>
         <Toolbar className={classes.toolbar}>
-          <Typography variant="h6">{`Your Uploaded Documents (${count < 0 ? '-' : count})`}</Typography>
+          <Typography variant="h6">{`Your Uploaded Documents (${
+            count < 0 ? '-' : count
+          })`}</Typography>
           <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={() => {}}
-              color="inherit"
-              className={classes.buttonDelete}
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={() => {}}
+            color="inherit"
+            className={classes.buttonDelete}
           >
             <Delete />
           </IconButton>
         </Toolbar>
       </AppBar>
-    <div className={classes.mainContainer}>
-      <div
-        className={`${classes.listContainer} ${
-          screenIsWide ? classes.listContainerWideScreen : ''
-        }`}
-      >
-        <Typography variant="body1" component="h3" className={classes.header}>
-          {`Your Uploaded Documents (${count < 0 ? '-' : count})`}
-        </Typography>
-        <List component="nav" aria-label="List of documents">
-          {itemsElements}
-        </List>
+      <div className={classes.mainContainer}>
+        <div
+          className={`${classes.listContainer} ${
+            screenIsWide ? classes.listContainerWideScreen : ''
+          }`}
+        >
+          <List component="nav" aria-label="List of documents">
+            {itemsElements}
+          </List>
+        </div>
+        {screenIsWide && (
+          <GalleryItem setDocuments={setDocuments} documents={aDocuments} />
+        )}
       </div>
-      {screenIsWide && (
-        <GalleryItem setDocuments={setDocuments} documents={aDocuments} />
-      )}
-    </div>
-  </>);
+    </>
+  );
 }
 
 export default Gallery;

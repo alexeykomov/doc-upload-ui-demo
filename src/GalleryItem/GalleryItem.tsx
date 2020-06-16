@@ -36,12 +36,17 @@ const useStyles = makeStyles({
     position: 'absolute',
   },
   readingContainer: {
+
     backgroundColor: 'rgb(233,239,246)',
     flex: 1,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'auto',
+    height: 'calc(100% - 64px)',
+    marginTop: '64px',
+  },
+  readingContainerScreenIsWide: {
     height: '100%',
   },
   listContainer: {
