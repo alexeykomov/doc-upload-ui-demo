@@ -6,6 +6,7 @@ import Delete from '@material-ui/icons/Delete';
 import React, { useState } from 'react';
 import { openingStorage } from './storage/storage';
 import {SetDocuments, UploadedDocument} from './__types__';
+import {DocumentName} from "./storage/DocumentRecord";
 
 interface MoreActionsProps {
   setDocuments: SetDocuments;
@@ -75,7 +76,7 @@ export const MoreActions = ({
       >
         <MenuItem onClick={onDeleteClick}>
           <Delete />
-          {`Delete ${selectedDocument.category}`}
+          {`Delete ${DocumentName[selectedDocument.category]}`}
         </MenuItem>
       </Menu>
     </>

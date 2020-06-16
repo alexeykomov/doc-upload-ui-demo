@@ -14,7 +14,8 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Toolbar from '@material-ui/core/Toolbar';
 import { openingStorage } from '../storage/storage';
 import { MoreActions } from '../MoreActions';
-import {WIDE_SCREEN_MEDIA_QUERY} from "../MainScreen/MainScreenConstants";
+import { WIDE_SCREEN_MEDIA_QUERY } from '../MainScreen/MainScreenConstants';
+import {DocumentName} from "../storage/DocumentRecord";
 
 const useStyles = makeStyles({
   root: {
@@ -120,7 +121,8 @@ function Gallery(props: GalleryItemProps) {
       .then((storage) => {
         return storage.count();
       })
-      .then((count) => setCount(count));
+      .then((count) => setCount(count))
+      .catch((e) => console.log('Error when getting count: ', count));
   });
 
   const makeOnClick = (cardId: number) => () => {
@@ -139,7 +141,7 @@ function Gallery(props: GalleryItemProps) {
       className={item.selected ? classes.listItemSelected : ''}
       key={item.category}
     >
-      <ListItemText primary={item.category} className={classes.itemText} />
+      <ListItemText primary={DocumentName[item.category]} className={classes.itemText} />
     </ListItem>
   ));
 

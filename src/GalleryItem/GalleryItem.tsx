@@ -12,6 +12,7 @@ import { MoreActions } from '../MoreActions';
 import { WIDE_SCREEN_MEDIA_QUERY } from '../MainScreen/MainScreenConstants';
 import { shouldRenderNewDocuments } from './GalleryItemUtils';
 import { useStyles } from './GalleryItemStyles';
+import {DocumentName} from "../storage/DocumentRecord";
 
 interface GalleryItemProps {
   setDocuments: SetDocuments;
@@ -135,8 +136,8 @@ function GalleryItem(props: GalleryItemProps) {
     <>
       {screenIsWide ? null : (
         <AppBar>
-          <Toolbar>
-            <Typography variant="h6">{`${document.category}`}</Typography>
+          <Toolbar className={classes.toolbar}>
+            <Typography variant="h6">{`${DocumentName[document.category]}`}</Typography>
             <MoreActions
               setDocuments={setDocuments}
               selectedDocument={document}

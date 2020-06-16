@@ -21,6 +21,10 @@ export const useStyles = makeStyles({
 
     position: 'absolute',
   },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   readingContainer: {
     position: 'absolute',
     backgroundColor: 'rgb(233,239,246)',
