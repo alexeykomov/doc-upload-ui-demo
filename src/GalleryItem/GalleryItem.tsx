@@ -9,10 +9,10 @@ import { SetDocuments, UploadedDocument } from '../__types__';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import { PhotoCamera } from '@material-ui/icons';
-import { openingStorage } from '../index';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Toolbar from '@material-ui/core/Toolbar';
 import { AppBar, Typography } from '@material-ui/core';
+import {openingStorage} from "../storage/storage";
 
 const useStyles = makeStyles({
   root: {
@@ -36,18 +36,21 @@ const useStyles = makeStyles({
     position: 'absolute',
   },
   readingContainer: {
-
+    position: 'absolute',
     backgroundColor: 'rgb(233,239,246)',
     flex: 1,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'auto',
-    height: 'calc(100% - 64px)',
-    marginTop: '64px',
+    height: 'calc(100% - 56px)',
+    width: '100%',
+    marginTop: '56px',
   },
   readingContainerScreenIsWide: {
+    position: 'static',
     height: '100%',
+    marginTop: '0',
   },
   listContainer: {
     maxWidth: '320px',
@@ -231,12 +234,18 @@ function GalleryItem(props: GalleryItemProps) {
 
   return (
     <>
-      {screenIsWide ? null : <AppBar>
-        <Toolbar>
-          <Typography variant="h6">{`${document.category}`}</Typography>
-        </Toolbar>
-      </AppBar>}
-      <div className={classes.readingContainer}>
+      {screenIsWide ? null : (
+        <AppBar>
+          <Toolbar>
+            <Typography variant="h6">{`${document.category}`}</Typography>
+          </Toolbar>
+        </AppBar>
+      )}
+      <div
+        className={`${classes.readingContainer} ${
+          screenIsWide ? classes.readingContainerScreenIsWide : ''
+        }`}
+      >
         {loading ? (
           <CircularProgress className={classes.progress} />
         ) : document.url ? (

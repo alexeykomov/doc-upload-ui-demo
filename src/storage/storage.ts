@@ -202,3 +202,5 @@ export class Storage {
     };
   }
 }
+
+export const openingStorage = Storage.open();

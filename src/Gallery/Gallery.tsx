@@ -9,12 +9,16 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import { SetDocuments, UploadedDocument } from '../__types__';
 
-import { openingStorage } from '../index';
 import GalleryItem from '../GalleryItem/GalleryItem';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import { Delete } from '@material-ui/icons';
+import MoreIcon from '@material-ui/icons/MoreVert';
+import Delete from '@material-ui/icons/Delete';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { openingStorage } from '../storage/storage';
+import {MoreActions} from "../MoreActions";
 
 const useStyles = makeStyles({
   root: {
@@ -112,6 +116,8 @@ function Gallery(props: GalleryItemProps) {
   if (!id) {
     documentList[0].selected = true;
   }
+  const document =
+    documentList.find((document) => document.selected) || documentList[0];
 
   useEffect(() => {
     openingStorage
@@ -148,16 +154,7 @@ function Gallery(props: GalleryItemProps) {
           <Typography variant="h6">{`Your Uploaded Documents (${
             count < 0 ? '-' : count
           })`}</Typography>
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={() => {}}
-            color="inherit"
-            className={classes.buttonDelete}
-          >
-            <Delete />
-          </IconButton>
+          <MoreActions/>
         </Toolbar>
       </AppBar>
       <div className={classes.mainContainer}>
