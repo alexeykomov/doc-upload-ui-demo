@@ -12,13 +12,9 @@ import { SetDocuments, UploadedDocument } from '../__types__';
 import GalleryItem from '../GalleryItem/GalleryItem';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MoreIcon from '@material-ui/icons/MoreVert';
-import Delete from '@material-ui/icons/Delete';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { openingStorage } from '../storage/storage';
-import {MoreActions} from "../MoreActions";
+import { MoreActions } from '../MoreActions';
+import {WIDE_SCREEN_MEDIA_QUERY} from "../MainScreen/MainScreenConstants";
 
 const useStyles = makeStyles({
   root: {
@@ -108,7 +104,7 @@ function Gallery(props: GalleryItemProps) {
   const history = useHistory();
   const { id } = useParams();
   const [count, setCount] = useState(-1);
-  const screenIsWide = useMediaQuery('(min-width: 400px)');
+  const screenIsWide = useMediaQuery(WIDE_SCREEN_MEDIA_QUERY);
   const documentList = aDocuments.map((document, index) => ({
     ...document,
     selected: id === String(index),
@@ -154,7 +150,13 @@ function Gallery(props: GalleryItemProps) {
           <Typography variant="h6">{`Your Uploaded Documents (${
             count < 0 ? '-' : count
           })`}</Typography>
-          <MoreActions/>
+          {screenIsWide ? (
+            <MoreActions
+              selectedDocument={document}
+              documents={documentList}
+              setDocuments={setDocuments}
+            />
+          ) : null}
         </Toolbar>
       </AppBar>
       <div className={classes.mainContainer}>

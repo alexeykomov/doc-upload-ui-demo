@@ -12,7 +12,9 @@ import { PhotoCamera } from '@material-ui/icons';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Toolbar from '@material-ui/core/Toolbar';
 import { AppBar, Typography } from '@material-ui/core';
-import {openingStorage} from "../storage/storage";
+import { openingStorage } from '../storage/storage';
+import { MoreActions } from '../MoreActions';
+import {WIDE_SCREEN_MEDIA_QUERY} from "../MainScreen/MainScreenConstants";
 
 const useStyles = makeStyles({
   root: {
@@ -123,7 +125,7 @@ function GalleryItem(props: GalleryItemProps) {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
 
-  const screenIsWide = useMediaQuery('(min-width: 400px)');
+  const screenIsWide = useMediaQuery(WIDE_SCREEN_MEDIA_QUERY);
   const [screenIsWideState, setScreenIsWideState] = useState(screenIsWide);
   const history = useHistory();
 
@@ -238,6 +240,11 @@ function GalleryItem(props: GalleryItemProps) {
         <AppBar>
           <Toolbar>
             <Typography variant="h6">{`${document.category}`}</Typography>
+            <MoreActions
+              setDocuments={setDocuments}
+              selectedDocument={document}
+              documents={documentList}
+            />
           </Toolbar>
         </AppBar>
       )}

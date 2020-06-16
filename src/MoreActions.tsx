@@ -9,13 +9,13 @@ import {SetDocuments, UploadedDocument} from './__types__';
 
 interface MoreActionsProps {
   setDocuments: SetDocuments;
-  document: UploadedDocument;
-  aDocuments: UploadedDocument[];
+  selectedDocument: UploadedDocument;
+  documents: UploadedDocument[];
 }
 
 export const MoreActions = ({
-  document,
-  aDocuments,
+  selectedDocument,
+  documents,
   setDocuments,
 }: MoreActionsProps) => {
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
@@ -28,18 +28,18 @@ export const MoreActions = ({
   const onClose = () => {
     openingStorage
       .then((storage) => {
-        return storage.delete(document.category);
+        return storage.delete(selectedDocument.category);
       })
       .then(() => {
-        const deletedDocument = document;
+        const deletedDocument = selectedDocument;
         URL.revokeObjectURL(deletedDocument.url);
         deletedDocument.url = '';
-        const documents = [...aDocuments];
-        const indexToReplace = documents.findIndex(
+        const modifiedDocuments = [...documents];
+        const indexToReplace = modifiedDocuments.findIndex(
           (document) => document.category === deletedDocument.category
         );
-        documents.splice(indexToReplace, 1, deletedDocument);
-        setDocuments(documents);
+        modifiedDocuments.splice(indexToReplace, 1, deletedDocument);
+        setDocuments(modifiedDocuments);
       });
     setAnchorEl(null);
   };
@@ -72,7 +72,7 @@ export const MoreActions = ({
       >
         <MenuItem onClick={onClose}>
           <Delete />
-          {`Delete ${document.category}`}
+          {`Delete ${selectedDocument.category}`}
         </MenuItem>
       </Menu>
     </>
