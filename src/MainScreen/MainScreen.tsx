@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import grey from '@material-ui/core/colors/grey';
 import { GalleryItem } from '../GalleryItem/GalleryItem';
 import { UploadedDocument } from '../__types__';
+import { DocumentCategoryOrder } from '../storage/DocumentRecord';
 
 const useStyles = makeStyles({
   root: {
@@ -27,7 +28,15 @@ const useStyles = makeStyles({
 
 export const MainScreen = () => {
   const classes = useStyles();
-  const [documents, setDocuments] = useState([] as UploadedDocument[]);
+  const [documents, setDocuments] = useState(
+    DocumentCategoryOrder.map((category) => ({
+      ext: '',
+      name: '',
+      url: '',
+      category,
+      selected: false,
+    })) as UploadedDocument[]
+  );
 
   return (
     <>

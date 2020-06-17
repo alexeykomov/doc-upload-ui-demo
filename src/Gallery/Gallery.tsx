@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import differenceWith from 'lodash/differenceWith';
 import unionWith from 'lodash/unionWith';
@@ -10,6 +10,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import { SetDocuments, UploadedDocument } from '../__types__';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@material-ui/core/IconButton';
+import { PhotoCamera } from '@material-ui/icons';
+import { openingStorage } from '../index';
 
 const useStyles = makeStyles({
   root: {
@@ -56,6 +60,16 @@ const useStyles = makeStyles({
     maxWidth: '600px',
     cursor: 'grab',
   },
+  progress: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'transparent',
+  },
+  uploadForm: {
+    position: 'absolute',
+    visibility: 'hidden',
+  },
   title: {
     fontSize: 14,
   },
@@ -77,10 +91,10 @@ const compareDocuments = (
   documentA: UploadedDocument,
   documentB: UploadedDocument
 ) => {
-  if (documentA.name === documentB.name && documentA.ext === documentB.ext) {
-    return true;
-  }
-  return false;
+  return documentA.name === documentB.name &&
+      documentA.ext === documentB.ext &&
+      documentA.url === documentB.url;
+
 };
 
 const shouldRenderNewDocuments = (
@@ -97,59 +111,161 @@ function Gallery(props: GalleryItemProps) {
   const classes = useStyles();
   const history = useHistory();
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [count, setCount] = useState(-1);
 
-  console.log('id: ', id);
+  const documentList = aDocuments.map((document, index) => ({
+    ...document,
+    selected: id === String(index),
+  }));
+  if (!id) {
+    documentList[0].selected = true;
+  }
 
-  let items = [
-    { name: "Driver's License", selected: false },
-    { name: 'Your Photo', selected: false },
-    { name: 'Insurance Card', selected: true },
-    { name: 'W2', selected: false },
-    { name: 'Pay Stub', selected: false },
-  ].map((item, index) => ({ ...item, selected: id === String(index) }));
+  const document = documentList.reduce(
+    (firstSelected: UploadedDocument, nextDocument: UploadedDocument) => {
+      if (!firstSelected.selected && nextDocument.selected) {
+        return nextDocument;
+      }
+      return firstSelected;
+    },
+    documentList[0]
+  );
 
   useEffect(() => {
-    fetch('./doc')
-      .then((response) => response.json())
-      .then((documents) => {
-        if (shouldRenderNewDocuments(aDocuments, documents)) {
+    if (document.url) {
+      return;
+    }
+
+    setLoading(true);
+    openingStorage
+      .then((storage) => {
+        let category = document.category;
+        return storage.select(category);
+      })
+      .then((documentRecord) => {
+        if (!documentRecord) {
+          setLoading(false);
+          return;
+        }
+        const url = URL.createObjectURL(documentRecord.file);
+        const retrievedDocument: UploadedDocument = {
+          name: documentRecord.name,
+          ext: documentRecord.mimeType,
+          category: documentRecord.category,
+          url: url,
+          selected: false,
+        };
+
+        const documents = aDocuments.map((document) => {
+          if (document.url) {
+            URL.revokeObjectURL(document.url);
+          }
+          return { ...document, url: '' };
+        });
+        const indexToReplace = documents.findIndex(
+          (document) => document.category === documentRecord.category
+        );
+        documents.splice(indexToReplace, 1, retrievedDocument);
+        const renderNewDocuments = shouldRenderNewDocuments(
+          aDocuments,
+          documents
+        );
+        if (renderNewDocuments) {
           setDocuments(documents);
         }
+        setLoading(false);
       })
-      .catch((e) => console.log(`Error when fetching documents: ${e}`));
+      .catch((e) => {
+        console.log(`Error when fetching documents: ${e}`);
+        setLoading(false);
+      });
+  }, [document.category, aDocuments, setDocuments]);
+
+  useEffect(() => {
+    openingStorage
+      .then((storage) => {
+        return storage.count();
+      })
+      .then((count) => setCount(count));
   });
+
   const makeOnClick = (cardId: number) => () => {
     history.push(`/gallery/${cardId}`);
   };
 
-  const itemsElements = items.map((item, index) => (
+  const itemsElements = documentList.map((item, index) => (
     <ListItem
       button
       onClick={makeOnClick(index)}
       className={item.selected ? classes.listItemSelected : ''}
-      key={item.name}
+      key={item.category}
     >
-      <ListItemText primary={item.name} className={classes.itemText} />
+      <ListItemText primary={item.category} className={classes.itemText} />
     </ListItem>
   ));
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const onChange = () => {
+    const input = inputRef.current as HTMLInputElement;
+    const files = input.files;
+    if (!files || !files.length) {
+      return;
+    }
+    const firstFile = files[0];
+    openingStorage
+      .then((storage) => {
+        return storage.store({
+          file: firstFile,
+          name: firstFile.name,
+          category: document.category,
+          mimeType: firstFile.type,
+        });
+      })
+      .then(() => setDocuments([...aDocuments]));
+  };
 
   return (
     <div className={classes.mainContainer}>
       <div className={classes.listContainer}>
         <Typography variant="body1" component="h3" className={classes.header}>
-          Your Uploaded Documents (5)
+          {`Your Uploaded Documents (${count < 0 ? '-' : count})`}
         </Typography>
         <List component="nav" aria-label="List of documents">
           {itemsElements}
         </List>
       </div>
       <div className={classes.readingContainer}>
-        <img
-          width={300}
-          src={`../screen${id}.png`}
-          alt={'Стив Макконнелл - Совершенный код, 2-е издание - 2010.png'}
-          className={classes.pageView}
-        />
+        {loading ? (
+          <CircularProgress className={classes.progress} />
+        ) : document.url ? (
+          <img
+            width={300}
+            src={document.url}
+            alt={document.name}
+            className={classes.pageView}
+          />
+        ) : (
+          <>
+            <input
+              type="file"
+              accept="image/*,application/pdf"
+              id="upload-form-mini"
+              className={classes.uploadForm}
+              onChange={onChange}
+              ref={inputRef}
+            />
+            <label htmlFor="upload-form-mini">
+              <IconButton
+                color="primary"
+                aria-label="Upload document"
+                component="span"
+              >
+                <PhotoCamera />
+              </IconButton>
+            </label>
+          </>
+        )}
       </div>
     </div>
   );

@@ -47,6 +47,10 @@ export class Storage {
     });
   }
 
+  public close() {
+    this.db?.close();
+  }
+
   public store(documentRecord: DocumentRecord): Promise<number> {
     return blobToBuffer(documentRecord).then(
       (documentRecordForStorage) =>
@@ -133,6 +137,7 @@ export class Storage {
       request.onsuccess = (event) => {
         const request = event.target as IDBRequest;
         imageRecord = request.result as DocumentRecordForStorage;
+        console.log('imageRecord: ', imageRecord);
         console.log('Request is success: ');
       };
     }).then((r: DocumentRecordForStorage | null) => {
