@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { MainScreen } from './MainScreen/MainScreen';
-import {openingStorage} from "./index";
+import {openingStorage} from "./storage/storage";
 
 function App() {
   return <MainScreen />;
