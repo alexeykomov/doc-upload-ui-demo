@@ -1,7 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import differenceWith from 'lodash/differenceWith';
-import unionWith from 'lodash/unionWith';
 
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,10 +8,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import { SetDocuments, UploadedDocument } from '../__types__';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@material-ui/core/IconButton';
-import { PhotoCamera } from '@material-ui/icons';
+
 import { openingStorage } from '../index';
+import GalleryItem from '../GalleryItem/GalleryItem';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const useStyles = makeStyles({
   root: {
@@ -46,8 +44,11 @@ const useStyles = makeStyles({
     height: '100%',
   },
   listContainer: {
-    maxWidth: '320px',
+    width: '100%',
     backgroundColor: '#fff',
+  },
+  listContainerWideScreen: {
+    maxWidth: '320px',
   },
   listItemSelected: {
     backgroundColor: 'rgb(233,239,246)',
@@ -87,33 +88,13 @@ interface GalleryItemProps {
   documents: UploadedDocument[];
 }
 
-const compareDocuments = (
-  documentA: UploadedDocument,
-  documentB: UploadedDocument
-) => {
-  return documentA.name === documentB.name &&
-      documentA.ext === documentB.ext &&
-      documentA.url === documentB.url;
-
-};
-
-const shouldRenderNewDocuments = (
-  oldDocuments: UploadedDocument[],
-  newDocuments: UploadedDocument[]
-) => {
-  let union = unionWith(newDocuments, oldDocuments, compareDocuments);
-  const difference = differenceWith(union, oldDocuments, compareDocuments);
-  return difference.length;
-};
-
 function Gallery(props: GalleryItemProps) {
   const { documents: aDocuments, setDocuments } = props;
   const classes = useStyles();
   const history = useHistory();
   const { id } = useParams();
-  const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(-1);
-
+  const screenIsWide = useMediaQuery('(min-width: 400px)');
   const documentList = aDocuments.map((document, index) => ({
     ...document,
     selected: id === String(index),
@@ -121,66 +102,6 @@ function Gallery(props: GalleryItemProps) {
   if (!id) {
     documentList[0].selected = true;
   }
-
-  const document = documentList.reduce(
-    (firstSelected: UploadedDocument, nextDocument: UploadedDocument) => {
-      if (!firstSelected.selected && nextDocument.selected) {
-        return nextDocument;
-      }
-      return firstSelected;
-    },
-    documentList[0]
-  );
-
-  useEffect(() => {
-    if (document.url) {
-      return;
-    }
-
-    setLoading(true);
-    openingStorage
-      .then((storage) => {
-        let category = document.category;
-        return storage.select(category);
-      })
-      .then((documentRecord) => {
-        if (!documentRecord) {
-          setLoading(false);
-          return;
-        }
-        const url = URL.createObjectURL(documentRecord.file);
-        const retrievedDocument: UploadedDocument = {
-          name: documentRecord.name,
-          ext: documentRecord.mimeType,
-          category: documentRecord.category,
-          url: url,
-          selected: false,
-        };
-
-        const documents = aDocuments.map((document) => {
-          if (document.url) {
-            URL.revokeObjectURL(document.url);
-          }
-          return { ...document, url: '' };
-        });
-        const indexToReplace = documents.findIndex(
-          (document) => document.category === documentRecord.category
-        );
-        documents.splice(indexToReplace, 1, retrievedDocument);
-        const renderNewDocuments = shouldRenderNewDocuments(
-          aDocuments,
-          documents
-        );
-        if (renderNewDocuments) {
-          setDocuments(documents);
-        }
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log(`Error when fetching documents: ${e}`);
-        setLoading(false);
-      });
-  }, [document.category, aDocuments, setDocuments]);
 
   useEffect(() => {
     openingStorage
@@ -191,7 +112,12 @@ function Gallery(props: GalleryItemProps) {
   });
 
   const makeOnClick = (cardId: number) => () => {
-    history.push(`/gallery/${cardId}`);
+    if (screenIsWide) {
+      history.push(`/gallery/${cardId}`);
+      return;
+    }
+
+    history.push(`/item/${cardId}`);
   };
 
   const itemsElements = documentList.map((item, index) => (
@@ -205,29 +131,13 @@ function Gallery(props: GalleryItemProps) {
     </ListItem>
   ));
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const onChange = () => {
-    const input = inputRef.current as HTMLInputElement;
-    const files = input.files;
-    if (!files || !files.length) {
-      return;
-    }
-    const firstFile = files[0];
-    openingStorage
-      .then((storage) => {
-        return storage.store({
-          file: firstFile,
-          name: firstFile.name,
-          category: document.category,
-          mimeType: firstFile.type,
-        });
-      })
-      .then(() => setDocuments([...aDocuments]));
-  };
-
   return (
     <div className={classes.mainContainer}>
-      <div className={classes.listContainer}>
+      <div
+        className={`${classes.listContainer} ${
+          screenIsWide ? classes.listContainerWideScreen : ''
+        }`}
+      >
         <Typography variant="body1" component="h3" className={classes.header}>
           {`Your Uploaded Documents (${count < 0 ? '-' : count})`}
         </Typography>
@@ -235,38 +145,9 @@ function Gallery(props: GalleryItemProps) {
           {itemsElements}
         </List>
       </div>
-      <div className={classes.readingContainer}>
-        {loading ? (
-          <CircularProgress className={classes.progress} />
-        ) : document.url ? (
-          <img
-            width={300}
-            src={document.url}
-            alt={document.name}
-            className={classes.pageView}
-          />
-        ) : (
-          <>
-            <input
-              type="file"
-              accept="image/*,application/pdf"
-              id="upload-form-mini"
-              className={classes.uploadForm}
-              onChange={onChange}
-              ref={inputRef}
-            />
-            <label htmlFor="upload-form-mini">
-              <IconButton
-                color="primary"
-                aria-label="Upload document"
-                component="span"
-              >
-                <PhotoCamera />
-              </IconButton>
-            </label>
-          </>
-        )}
-      </div>
+      {screenIsWide && (
+        <GalleryItem setDocuments={setDocuments} documents={aDocuments} />
+      )}
     </div>
   );
 }

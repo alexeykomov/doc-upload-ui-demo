@@ -6,7 +6,7 @@ import {
 import { blobToBuffer, bufferToBlob } from './BlobToTypedArrayConverter';
 
 export class Storage {
-  public static VERSION = 7;
+  public static VERSION = 8;
   public static STORE_NAME = `images${Storage.VERSION}`;
   public static KEY_PATH = 'category';
   public static DB_NAME = 'documentsDb';
