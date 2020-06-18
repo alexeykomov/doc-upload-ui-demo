@@ -4,7 +4,7 @@ import UploadForm from '../UploadForm/UploadForm';
 import Gallery from '../Gallery/Gallery';
 import { makeStyles } from '@material-ui/core/styles';
 import grey from '@material-ui/core/colors/grey';
-import { GalleryItem } from '../GalleryItem/GalleryItem';
+import GalleryItem from '../GalleryItem/GalleryItem';
 import { UploadedDocument } from '../__types__';
 import { DocumentCategoryOrder } from '../storage/DocumentRecord';
 
@@ -43,7 +43,13 @@ export const MainScreen = () => {
       <div className={classes.container}>
         <div className={classes.content}>
           <Switch>
-            <Route exact path="/" children={<UploadForm />} />
+            <Route
+              exact
+              path="/"
+              children={
+                <Gallery setDocuments={setDocuments} documents={documents} />
+              }
+            />
             <Route path="/upload" children={<UploadForm />} />
             <Route
               path="/gallery/:id"
