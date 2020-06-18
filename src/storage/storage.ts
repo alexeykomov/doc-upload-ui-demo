@@ -137,7 +137,6 @@ export class Storage {
       request.onsuccess = (event) => {
         const request = event.target as IDBRequest;
         imageRecord = request.result as DocumentRecordForStorage;
-        console.log('imageRecord: ', imageRecord);
         console.log('Request is success: ');
       };
     }).then((r: DocumentRecordForStorage | null) => {
