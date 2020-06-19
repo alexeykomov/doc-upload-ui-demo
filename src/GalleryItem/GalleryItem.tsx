@@ -96,7 +96,7 @@ function GalleryItem(props: GalleryItemProps) {
         console.log(`Error when fetching documents: ${e}`);
         setLoading(false);
       });
-  }, [document.category, aDocuments, setDocuments]);
+  }, [document.url, document.category, aDocuments, setDocuments]);
 
   const resizeListener = () => {
     const screenIsWide = matchMedia('(min-width:400px)');
